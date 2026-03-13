@@ -3,6 +3,26 @@ import telebot
 import sqlite3
 import datetime
 from telebot import types
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
+
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Bot is running')
+    
+    def log_message(self, format, *args):
+        # Отключаем логирование запросов
+        pass
+
+def run_http_server():
+    server = HTTPServer(('0.0.0.0', 10000), SimpleHandler)
+    server.serve_forever()
+
+# Запускаем HTTP-сервер в отдельном потоке
+thread = threading.Thread(target=run_http_server, daemon=True)
+thread.start()
 
 # ========== НАСТРОЙКИ ==========
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
