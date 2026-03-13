@@ -150,6 +150,17 @@ def report(message):
     report_text = f"📊 Отчёт по группе {GROUP_NAME} на {target_date}:\n\nПРИСУТСТВОВАЛИ:\n{present_list}\n\nОТСУТСТВОВАЛИ:\n{absent_list}"
     bot.send_message(message.chat.id, report_text)
 
+@bot.message_handler(commands=['backup'])
+def backup(message):
+    if message.from_user.id != TEACHER_ID:
+        bot.send_message(message.chat.id, "Нет доступа.")
+        return
+    try:
+        with open('attendance.db', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except Exception as e:
+        bot.send_message(message.chat.id, f"Ошибка: {e}")
+        
 @bot.message_handler(commands=['help'])
 def help_command(message):
     help_text = f"""
